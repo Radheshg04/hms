@@ -1,24 +1,35 @@
 <?php
 session_start();
+$userRegistered = false;
 $submit = false;
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $server = "localhost";
     $username = "root";
     $pass = "";
     $dbname = "hospital_management";
-
+    
     $conn = new mysqli($server, $username, $pass, $dbname);
     
     if ($conn->connect_error) {
         die("Connection to database failed due to " . $conn->connect_error);
     }
-
+    
     $name = $_POST['Name'];
     $age = $_POST['Age'];
     $gender = $_POST['Gender'];
     $phone = $_POST['Phone'];
     $email = $_POST['Email'];
     $password = $_POST['Password'];
+    
+    $_SESSION['Username'] = $email;
+    
+    $sqlRegisteredUserCheck = "SELECT * FROM users WHERE email=?";
+    $stmtRegisteredUserCheck = $conn->prepare($sqlRegisteredUserCheck);
+    $stmtRegisteredUserCheck->bind_param("s",$email);
+
+    $stmtRegisteredUserCheck->execute();
+    $resultRegisteredUserCheck = $stmtRegisteredUserCheck->get_result();
+    if($resultRegisteredUserCheck->num_rows==0){
     
     $sql = "INSERT INTO users (name, age, gender, phone, email, date_of_registration, password) 
     VALUES (?, ?, ?, ?, ?, current_timestamp(), ?)";
@@ -43,7 +54,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $stmt->close();
     $stmtroles->close();
-    $conn->close();
+} else {
+    $userRegistered = true;
+}
+$stmtRegisteredUserCheck->close();
+$conn->close();
 }
 ?>
 <!DOCTYPE html>
@@ -62,6 +77,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <?php
         if($submit==true){
             echo "<h2 style='text-align: center;'>Account created!</h2>";
+            sleep(0.25);
+            echo("Redirecting...");
+            header("Location: landing_pages/user.php");
+            exit();
+        }
+        else if($userRegistered==true){
+            echo "<h2 style='text-align: center;'>User already Exists!<br>Please login!</h2>";
         }
         ?>
             <div class="input-box">
@@ -93,10 +115,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <p>Already have an account? <a href="login_page/login_page.php">Login</a></p>
             </div>
         </form>
-        <!-- hitwebcounter Code START -->
-<a href="https://www.hitwebcounter.com" target="_blank">
-<img src="https://hitwebcounter.com/counter/counter.php?page=12568275&style=0005&nbdigits=3&type=page&initCount=0" title="Counter Widget" Alt="Visit counter For Websites"   border="0" /></a> 
     </div>
+
+    <!-- This script is for loading icons for name email age gender  -->
     <script src="https://kit.fontawesome.com/7bebefff04.js" crossorigin="anonymous"></script>
 </body>
 </html>
