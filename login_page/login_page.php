@@ -128,7 +128,7 @@ if ($exists && $exec) {
                     header("Location: ../landing_pages/doctor.php");
                     exit();
                 }
-                echo "<h2 style='text-align: center;'>User Exists!</h2>";
+                // echo "<h2 style='text-align: center;'>User Exists!</h2>";
             }
             else if(!$exists&&$exec){
                 echo"<h2 style='text-align: center'>User not Found!<br> Please register </h2>";

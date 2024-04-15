@@ -58,7 +58,7 @@
             <br>
             <div class="box">
                 <h3>Appointments:</h3>
-                <ul>
+                <ul style="list-style-type: none;">
                     <?php
                         while ($appointment = $resultAppointment->fetch_assoc()) {
                             echo "<li>Patient ID: " . $appointment['patient_id'] . " - Date: " . $appointment['appointed_date'] . " - Time: " . $appointment['appointed_time'] . "</li>";

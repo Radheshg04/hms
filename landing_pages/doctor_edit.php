@@ -52,13 +52,13 @@
                 $username = $_SESSION['Username'];
 
                 $edit_query = mysqli_query($conn,"UPDATE users SET age='$age',phone='$phone',gender='$gender' WHERE email='$username' ") or die("error occurred");
-                $edit_doc_table = mysqli_query($conn,"UPDATE doctor SET speciality='$speciality', charges = '$charges',room_no = '$room_no'");
+                $edit_doc_table = mysqli_query($conn,"UPDATE doctor SET speciality='$speciality', charges = '$charges',room_no = '$room_no' WHERE username='$username'");
 
                 if($edit_query){
                     echo "<div class='message'>
                     <p>Profile Updated!</p>
                 </div> <br>";
-                echo "<a href='user.php'><button class='btn'>Go Home</button>";
+                echo "<a href='doctor.php'><button class='btn'>Go Home</button>";
                 }
                }else{
 

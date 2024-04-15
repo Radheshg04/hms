@@ -23,7 +23,7 @@ body{
     box-shadow: 0 0 128px 0 rgba(0,0,0,0.1),
                 0 32px 64px -48px rgba(0,0,0,0.5);
 }
-.form-box{
+.form-box{ 
     width: 450px;
     margin: 0px 10px;
 }
@@ -71,8 +71,9 @@ body{
     margin-bottom: 15px;
 }
 
-/********* Home *****************/
 
+
+/* home page */
 .nav{
     background: #fff;
     display: flex;
@@ -83,8 +84,7 @@ body{
 }
 .logo{
     font-size: 25px;
-    font-weight: 900;
-    
+    font-weight: 900;   
 }
 .logo a{
     text-decoration: none;
@@ -93,6 +93,9 @@ body{
 .right-links a{
     padding: 0 10px;
     
+}
+.right-links{
+    display:flex;
 }
 main{
     display: flex;
@@ -113,19 +116,6 @@ main{
 .bottom{
     width: 100%;
     margin-top: 20px;
-}
-@media only screen and (max-width:840px){
-    .main-box .top{
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-    }
-    .top .box{
-        margin: 10px 10px;
-    }
-    .bottom{
-        margin-top: 0;
-    }
 }
 .message{
     text-align: center;
@@ -186,4 +176,9 @@ th, td {
     margin-top: 10px;
     border: none;
     cursor: pointer;
+}
+
+.pay-now a{
+    text-decoration: none;
+    color: #FFF;
 }

@@ -1,5 +1,8 @@
 <?php
 session_start();
+$_SERVER['REQUEST_METHOD'] = "POST";
+
+$submit = false;
 
 $userName = $_SESSION['Username'];
 $name = $_SESSION['name'];
@@ -16,11 +19,13 @@ if ($conn->connect_error) {
 
 $doctorQuery = "SELECT * FROM doctor INNER JOIN users on doctor.username = users.email";
 $doctorResult = $conn->query($doctorQuery);
+if(isset($_POST["doctor"])) {
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $selectedDoctor = $_POST['doctor'];
     $selectedDate = $_POST['date'];
     $selectedTime = $_POST['time'];
+
+    
 
     $availabilityQuery = "SELECT * FROM appointments WHERE appointed_to=? AND appointed_date=? AND appointed_time=?";
     $stmt = $conn->prepare($availabilityQuery);
@@ -28,16 +33,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt->execute();
     $availabilityResult = $stmt->get_result();
 
+    $_SESSION['selectedDoctor'] = $selectedDoctor;
+    $_SESSION['selectedDate'] = $selectedDate;
+    $_SESSION['selectedTime'] = $selectedTime;
+
+    // echo $selectedDoctor;
+
+    // echo var_dump($_POST);
     if ($availabilityResult->num_rows == 0) {
-        $insertQuery = "INSERT INTO appointments (patient_id, appointed_to, appointed_date, appointed_time) VALUES (?, ?, ?, ?)";
-        $stmt = $conn->prepare($insertQuery);
-        $stmt->bind_param("ssss", $userName, $selectedDoctor, $selectedDate, $selectedTime);
-        
-        if ($stmt->execute()) {
-            echo "<script>alert('Appointment booked successfully!');</script>";
-        } else {
-            echo "<script>alert('Error booking appointment. Please try again.');</script>";
-        }
+        header("Location: ../paywall/checkout.php");
+        exit();
     } else {
         echo "<script>alert('The selected time slot is not available. Please choose a different time.');</script>";
     }
@@ -79,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     <!-- // booking the appointment -->
     <div class="form">
-        <form method="post">
+        <form action="book_appointment.php" method="post">
             <div>
                 <label for="doctor">Select Doctor:</label>
                 <select name="doctor" id="doctor" required>
@@ -101,8 +106,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <input type="time" name="time" id="time" required>
             </div>
 
+
+            <!-- payment integration without code -->
+            <!-- <script async
+            src="https://js.stripe.com/v3/buy-button.js">
+            </script>
+
+            <stripe-buy-button
+            buy-button-id="buy_btn_1P44p0SDkYVNNJsLNFE94mqF"
+            publishable-key="pk_test_51P43wqSDkYVNNJsL1wVHMrmRh9oP0dLMI5B8wVuFV2goGIAlacGFe8O9u5qK7232KIz5diGnWB8P6y3CzlNwYEzH00YXeHf2WL"
+            >
+            </stripe-buy-button> -->
+
             <div>
-                <input type="submit" name="book" value="Book Appointment">
+                <button type="submit" class = "btn pay-now" name="book" value="Book Appointment">Pay Now
             </div>
         </form>
     </div>

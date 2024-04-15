@@ -11,16 +11,33 @@
     if ($conn->connect_error) {
         die("Connection to database failed due to " . $conn->connect_error);
     }
+
+    // Setup id as session variable
     $sql = "SELECT * FROM users where email='$userName'";
     $result = $conn->query($sql);
     $row = $result->fetch_assoc();
     $name = $_SESSION['name'] = $row['name'];
     $_SESSION['name'] = $name;
     
-    $sqlAppointment = "SELECT * FROM appointments where patient_id='$userName'";
+
+    // Logic for appointment
+    $sqlAppointment = "SELECT * FROM appointments INNER JOIN users ON users.email=appointments.appointed_to where patient_id='$userName'";
     $resultAppointment = $conn->query($sqlAppointment);
     $appointments = $resultAppointment->fetch_all(MYSQLI_ASSOC);
     $display = count($appointments);
+
+    // Cancellation logic
+    if(isset($cancelDoctor)){
+        echo 'TEST';
+        $cancelDoctor = $_POST['cancel_doc'];
+        $cancelDate = $_POST['cancel_date'];
+        $cancelTime = $_POST['cancel_time'];
+
+        $sqlCancellation = "SELECT * FROM appointments WHERE patient_id='$userName' AND appointed_to='$cancelDoctor' AND appointed_time='$cancelTime' AND appointed_date='$cancelDate'";
+        if($conn->query($sqlCancellation)){
+            echo"<script>alert('Appointment cancelled successfully')</script>";
+        }
+    }
     
     $conn->close();
 ?>
@@ -61,11 +78,18 @@
             </div>
             <br>
             <div class="box">
-                <h3>Your Appointments:</h3>
-                <ul>
+                <h3 style="font-size: 20px;">Your Appointments:</h3><br>
+                <ul style="list-style-type: none;">
                     <?php
                         foreach ($appointments as $appointment) {
-                            echo "<li>Date: " . $appointment['appointed_date'] . " - Time: " . $appointment['appointed_time'] . "</li>";
+                            echo "<li style='padding:10px;'><b>Doctor:</b> Dr. ".$appointment['name']. 
+                            " <b>&emsp;Date: </b>" . $appointment['appointed_date'] . 
+                            " <b>&emsp;Time: </b>" . $appointment['appointed_time'] . 
+                            "<input type='hidden' name='cancel_doc' value=".$appointment['name'].">
+                            <input type='hidden' name='cancel_time' value=".$appointment['appointed_date'].">
+                            <input type='hidden' name='cancel_date' value=".$appointment['appointed_time'].">
+                            <button type='submit' class='btn' id='cancel' name='cancel' style='float: right;
+                            margin-top:0px; height:37px;'>Cancel Appointment</li>";
                         }
                     ?>
                 </ul>
