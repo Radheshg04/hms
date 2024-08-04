@@ -1,1 +1,1 @@
-# dbms-minor-project
+# hospital-management-system
